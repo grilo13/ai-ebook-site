@@ -3,10 +3,6 @@
 	README.md,8/e/8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
 ?
 backend/main.py,c/b/cb368897cc5bf4934e15bc7a3c0b7d3b69446875
-F
-backend/core/config.py,3/e/3e30febf345262c42bee1ccd86ef960ef6ba9846
-F
-backend/core/logger.py,b/2/b2a056fffd954aeeeed6f769897f5e6b4adb3a23
 6
 run.py,8/0/806d6ceb4e60342798038124ccf7dc1a423a4433
 4
@@ -25,3 +21,10 @@ U
 %backend/app/models/ebook_generator.py,7/8/7890e904849424548c488c8b8ee940b8326797c3
 W
 'backend/app/models/langchain_wrapper.py,9/9/991622e84ea3fe681b118262da2c53e87b1811c6
+>
+pyproject.toml,5/d/5d07e7d72637aa0d59c89d381fe6dc4cf46e2491
+Q
+!backend/app/templates/__init__.py,e/9/e9be52f82fcfc54dafed0e6d22ee7247e3a25754
+:
+
+.gitignore,a/5/a5cc2925ca8258af241be7e5b0381edf30266302
