@@ -256,8 +256,8 @@ class EbookGenerator:
 
 if __name__ == '__main__':
     ebook_generator = EbookGenerator(temporary_id=str(uuid.uuid1()))
-    title, outline = ebook_generator.generate_ebook(topic='making money',
-                                                    target_audience='mid age person looking for easy money',
+    title, outline = ebook_generator.generate_ebook(topic='how to lose weight',
+                                                    target_audience='mid age moms',
                                                     preview=False)
     print("title: ", title)
     print("outline: ", outline)
