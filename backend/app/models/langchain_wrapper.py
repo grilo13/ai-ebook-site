@@ -20,7 +20,7 @@ class LangchainWrapper:
                 "role": "user",
                 "content": prompt
             }],
-            max_tokens=300
+            max_tokens=500
         )
         text = response.choices[0].message.content.strip()
         return text

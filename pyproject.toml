@@ -17,6 +17,8 @@ slowapi = "^0.1.9"
 docxtpl = "^0.17.0"
 pypdf = "^4.2.0"
 docx2pdf = "^0.1.8"
+pypandoc = "^1.13"
+pypandoc-binary = "^1.13"
 
 
 [build-system]
