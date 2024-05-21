@@ -35,16 +35,17 @@ async def create_ebook_preview(payload: CreateEbook):
         recipient_email="teste@mail.com",
         preview=True,
         callback=update_task_status,
+        id=id,
         sell=False,
     )
 
     try:
         return {'id': id}
     except Exception as err:
-        raise HTTPException(status_code=400, detail=str(err))
+        raise HTTPException(status_code=400, detail=err.__str__())
 
 
-@router.get("/check_ebook_status/<id:str>", response_class=JSONResponse)
+@router.get("/check_ebook_status/{id:str}", response_class=JSONResponse)
 async def check_ebook_status(id: str):
     task = tasks.get(id)
     print("task", task)

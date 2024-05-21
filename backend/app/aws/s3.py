@@ -24,7 +24,7 @@ class S3:
         self.try_permissions()
         try:
             with open(file_path, "rb") as f:
-                self.s3_client.upload_fileobj(f, self.bucket, file_name)
+                self.s3_client.upload_fileobj(f, self.bucket, file_name, ExtraArgs={'ContentDisposition': 'inline'})
         except ClientError as e:
             logging.error(e)
             return False

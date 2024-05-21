@@ -5,9 +5,9 @@ from backend.app.models.ebook_generator import EbookGenerator
 from backend.app.decorator.thread import threaded
 from backend.app.aws.s3 import S3
 
-S3_BUCKET = "ai-ebook"
+S3_BUCKET = "ai-new"
 SENDER = "nulllabsllc@gmail.com"
-REGION = "us-east-1"
+REGION = "eu-north-1"
 EBOOK_READY_EMAIL_SUBJECT = "Your AI-generated ebook is ready!"
 
 """
@@ -42,17 +42,22 @@ class Runner:
         start_time = time.time()
 
         if preview:
-            output_directory = "./preview/"
+            output_directory = "../preview/"
         else:
-            output_directory = "./output/"
+            output_directory = "../output/"
 
         eg = EbookGenerator(
-            temporary_id=id,
+            id=id,
             output_directory=output_directory
         )
 
         ebook = eg.generate_ebook(
-            topic, target_audience, id, num_chapters, num_subsections, preview
+            topic=topic,
+            target_audience=target_audience,
+            id=id,
+            num_chapters=num_chapters,
+            num_subsections=num_subsections,
+            preview=preview
         )
 
         if callback:
@@ -64,7 +69,8 @@ class Runner:
             # ses.try_permissions()
 
             print("Uploading to S3...")
-            file_url = s3.upload_file(ebook.pdf_file, f"{id}.pdf")
+            # file_url = s3.upload_file(ebook.pdf_file, f"{id}.pdf")
+            file_url = s3.upload_file(f"doc-{id}.docx", ebook.docx_file)
 
             callback(id, "completed", file_url)
 

@@ -9,7 +9,9 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from backend.app.core.config import settings
 from backend.app.limiter.limiter import limiter
-from app.core.middleware import log_middleware
+from backend.app.core.middleware import log_middleware
+
+from backend.app.routes.generation import router
 
 app = FastAPI(
     title=settings.PROJECT_NAME
@@ -41,9 +43,10 @@ async def health_status():
     return {"status": "OK"}
 
 
-# app.include_router(teams.router)
-
 @app.get("/home")
 @limiter.limit("2/minute")
 async def homepage(request: Request):
     return "test"
+
+
+app.include_router(router)

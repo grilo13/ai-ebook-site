@@ -1,4 +1,5 @@
 import json
+import os
 import uuid
 
 from backend.app.models.langchain_wrapper import LangchainWrapper
@@ -8,17 +9,18 @@ from docx2pdf import convert
 from docx import Document
 import subprocess
 import pypandoc
+from backend.app.models.ebook import Ebook
 
 
 class EbookGenerator:
-    def __init__(self, temporary_id: str, output_directory: str):
+    def __init__(self, id: str, output_directory: str):
         self.langchain_wrapper = LangchainWrapper()
         self.output_directory = output_directory
         self.cover_photo_location = (
-            f"cover_photo-{temporary_id}.jpg"
+            f"cover_photo-{id}.jpg"
         )
-        self.cover_pdf_location = f"cover-{temporary_id}.pdf"
-        self.cover_location = f"cover-{temporary_id}.docx"
+        self.cover_pdf_location = f"cover-{id}.pdf"
+        self.cover_location = f"cover-{id}.docx"
 
     def generate_title(self, topic: str, target_audience: str) -> str:
         print("starting generate title")
@@ -213,22 +215,24 @@ class EbookGenerator:
                        id: str,
                        num_chapters: int = 6,
                        num_subsections: int = 4,
-                       preview: bool = True) -> tuple:
+                       preview: bool = True) -> Ebook:
         print("starting generating the ebook")
 
-        # docx_file = f"app/ai_book_generation/docs/docs-{id}.docx"
+        docx_file = f"backend/app/docs/docs-{id}.docx"
 
         title = self.generate_title(topic=topic, target_audience=target_audience)
 
+        print("directory ", os.getcwd())
+
         template = {
             "cover_template": (
-                # "app/templates/covers/gen.docx"
-                "gen.docx"
+                "backend/app/templates/covers/gen.docx"
             ),
             "book_template": (
-                "theme.docx"
+                "backend/app/templates/content/theme.docx"
             ),
         }
+
         """
         self.generate_cover(cover_template=template.get("cover_template"),
                             title=title,
@@ -249,18 +253,23 @@ class EbookGenerator:
                            target_audience=target_audience,
                            title=title,
                            outline=outline,
-                           docx_file="teste-{}.docx".format(uuid.uuid4()),
+                           docx_file=docx_file,
                            book_template=template.get("book_template"),
                            preview=preview)
 
-        return title, outline
+        return Ebook(title=title,
+                     topic=topic,
+                     target_audience=target_audience,
+                     docx_file=docx_file)
 
 
 if __name__ == '__main__':
-    ebook_generator = EbookGenerator(temporary_id=str(uuid.uuid1()))
-    title, outline = ebook_generator.generate_ebook(topic='how to lose weight',
-                                                    target_audience='mid age moms',
-                                                    id="343423",
-                                                    preview=False)
-    print("title: ", title)
-    print("outline: ", outline)
+    ebook_generator = EbookGenerator(id=str(uuid.uuid1()),
+                                     output_directory="../preview/")
+    ebook = ebook_generator.generate_ebook(topic='how to lose weight',
+                                           target_audience='mid age moms',
+                                           id=str(uuid.uuid1()),
+                                           preview=True)
+    print("ebook title: ", ebook.title)
+    print("ebook topic: ", ebook.topic)
+
