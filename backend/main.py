@@ -5,11 +5,11 @@ from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from backend.app.core.config import settings
 from backend.app.limiter.limiter import limiter
-
-# from app.api import teams
+from app.core.middleware import log_middleware
 
 app = FastAPI(
     title=settings.PROJECT_NAME
@@ -22,6 +22,8 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+app.add_middleware(BaseHTTPMiddleware, dispatch=log_middleware)
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
