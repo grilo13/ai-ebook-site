@@ -11,6 +11,10 @@ router = APIRouter(tags=['generation'])
 tasks = {}
 
 
+def update_task_status(id, status, url=None):
+    tasks[id] = {"status": status, "url": url}
+
+
 # GET endpoint
 @router.get("/form", response_class=HTMLResponse)
 async def load_form(request: Request):
@@ -25,13 +29,12 @@ async def create_ebook_preview(payload: CreateEbook):
     print("identifier", id)
     tasks[id] = {"status": "processing", "url": None}
 
-    # TODO add runner to generate book in a different thread
-
     Runner().create_ebook(
         topic=payload.topic,
         target_audience=payload.target_audience,
         recipient_email="teste@mail.com",
         preview=True,
+        callback=update_task_status,
         sell=False,
     )
 

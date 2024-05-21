@@ -3,6 +3,7 @@ import time
 import random
 from backend.app.models.ebook_generator import EbookGenerator
 from backend.app.decorator.thread import threaded
+from backend.app.aws.s3 import S3
 
 S3_BUCKET = "ai-ebook"
 SENDER = "nulllabsllc@gmail.com"
@@ -53,6 +54,19 @@ class Runner:
         ebook = eg.generate_ebook(
             topic, target_audience, id, num_chapters, num_subsections, preview
         )
+
+        if callback:
+            s3 = S3(S3_BUCKET, REGION)
+            # ses = SES(SENDER, REGION)
+
+            # if permissions don't work, we want to fail early
+            s3.try_permissions()
+            # ses.try_permissions()
+
+            print("Uploading to S3...")
+            file_url = s3.upload_file(ebook.pdf_file, f"{id}.pdf")
+
+            callback(id, "completed", file_url)
 
         end_time = time.time()
         elapsed_time = end_time - start_time
