@@ -1,8 +1,11 @@
 import boto3
 from botocore.exceptions import ClientError
 import logging
+from dotenv import load_dotenv
 
 logger = logging.getLogger('s3')
+
+load_dotenv()
 
 
 class S3:
@@ -14,7 +17,8 @@ class S3:
     def try_permissions(self):
         # Attempt to get S3 buckets
         # This operation doesn't change any settings, but will fail if credentials are not available
-        self.s3_client.list_buckets()
+        buckets = self.s3_client.list_buckets()
+        print("buckets {}".format(buckets))
 
     def upload_file(self, file_name: str, file_path: str):
         self.try_permissions()
@@ -34,5 +38,7 @@ class S3:
 
 
 if __name__ == '__main__':
-    s3_client = S3(bucket='my-bucket', region='us-east-1')
-    s3_client.upload_file(file_name="", file_path="")
+    s3_client = S3(bucket='ai-new', region='eu-north-1')
+    file_url = s3_client.upload_file(file_name="preview_photo.png", file_path="../models/preview_photo.png")
+    # file_url = s3_client._get_file_url(bucket_name='ai-new', s3_file_name='teste-9a65815a-5d9b-4fe9-9a98-06efd3484c80.docx')
+    print("file_url:", file_url)
