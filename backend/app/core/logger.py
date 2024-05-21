@@ -1,6 +1,6 @@
 import logging.config
 
-from backend.core.config import settings
+from backend.app.core.config import settings
 
 LOG_LEVEL = settings.LOG_LEVEL
 
@@ -25,6 +25,11 @@ LOGGING_CONFIG = {
             "propagate": False,
         },
         "generator": {
+            "level": LOG_LEVEL,
+            "handlers": ["default"],
+            "propagate": False,
+        },
+        "s3": {
             "level": LOG_LEVEL,
             "handlers": ["default"],
             "propagate": False,

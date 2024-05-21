@@ -4,7 +4,7 @@ from starlette.responses import JSONResponse
 from backend.app.schemas.schemas import CreateEbook
 import random
 import time
-from backend.app.decorator.thread import threaded
+from backend.app.runner import Runner
 
 router = APIRouter(tags=['generation'])
 
@@ -26,6 +26,14 @@ async def create_ebook_preview(payload: CreateEbook):
     tasks[id] = {"status": "processing", "url": None}
 
     # TODO add runner to generate book in a different thread
+
+    Runner().create_ebook(
+        topic=payload.topic,
+        target_audience=payload.target_audience,
+        recipient_email="teste@mail.com",
+        preview=True,
+        sell=False,
+    )
 
     try:
         return {'id': id}

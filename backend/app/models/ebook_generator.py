@@ -11,8 +11,9 @@ import pypandoc
 
 
 class EbookGenerator:
-    def __init__(self, temporary_id: str):
+    def __init__(self, temporary_id: str, output_directory: str):
         self.langchain_wrapper = LangchainWrapper()
+        self.output_directory = output_directory
         self.cover_photo_location = (
             f"cover_photo-{temporary_id}.jpg"
         )
@@ -209,6 +210,7 @@ class EbookGenerator:
     def generate_ebook(self,
                        topic: str,
                        target_audience: str,
+                       id: str,
                        num_chapters: int = 6,
                        num_subsections: int = 4,
                        preview: bool = True) -> tuple:
@@ -258,6 +260,7 @@ if __name__ == '__main__':
     ebook_generator = EbookGenerator(temporary_id=str(uuid.uuid1()))
     title, outline = ebook_generator.generate_ebook(topic='how to lose weight',
                                                     target_audience='mid age moms',
+                                                    id="343423",
                                                     preview=False)
     print("title: ", title)
     print("outline: ", outline)
