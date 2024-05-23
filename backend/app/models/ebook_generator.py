@@ -1,25 +1,30 @@
 import json
 import os
+import subprocess
 import uuid
 
-from backend.app.models.langchain_wrapper import LangchainWrapper
-from docxtpl import DocxTemplate, InlineImage
-from docx.shared import Mm
-from docx2pdf import convert
-from docx import Document
-import subprocess
+import pypdf
 import pypandoc
+from docx import Document
+from docx.shared import Mm
+from docxtpl import DocxTemplate, InlineImage
+
 from backend.app.models.ebook import Ebook
+from backend.app.models.langchain_wrapper import LangchainWrapper
+from backend.app.models.pdf_converter import PDFConverter
 
 
 class EbookGenerator:
     def __init__(self, id: str, output_directory: str):
         self.langchain_wrapper = LangchainWrapper()
+        self.pdf_converter = PDFConverter()
         self.output_directory = output_directory
         self.cover_photo_location = (
             f"cover_photo-{id}.jpg"
         )
-        self.cover_pdf_location = f"cover-{id}.pdf"
+        # self.content_pdf_location = f"backend/app/temp/book-{id}.pdf"
+        self.content_pdf_location = "backend/app/temp/"
+        self.final_pdf_location = f"backend/app/temp/book-{id}.pdf"
         self.cover_location = f"cover-{id}.docx"
 
     def generate_title(self, topic: str, target_audience: str) -> str:
@@ -209,6 +214,45 @@ class EbookGenerator:
 
         document.save(docx_file)
 
+    @staticmethod
+    def remove_first_page(source_pdf: str, output_pdf: str):
+        # Open the source PDF file
+        with open(source_pdf, "rb") as file:
+            reader = pypdf.PdfReader(file)
+
+            # Create a PDF writer object
+            writer = pypdf.PdfWriter()
+
+            # Number of pages in the source PDF
+            num_pages = reader.get_num_pages()
+
+            # Check if the PDF has more than one page
+            if num_pages < 2:
+                raise ValueError(
+                    "The PDF has only one page and cannot be processed."
+                )
+
+            # Loop through all pages except the first one
+            for page_num in range(1, num_pages):
+                # Get the page
+                page = reader.get_page(page_number=page_num)
+
+                # Add it to the writer object
+                writer.add_page(page=page)
+
+            # Write out the new PDF
+            with open(output_pdf, "wb") as output_file:
+                writer.write(output_file)
+
+    def merge_pdfs(self, input_files: list, output_file: str):
+        merger = pypdf.PdfMerger()
+
+        for pdf in input_files:
+            merger.append(pdf)
+
+        merger.write(output_file)
+        merger.close()
+
     def generate_ebook(self,
                        topic: str,
                        target_audience: str,
@@ -257,6 +301,16 @@ class EbookGenerator:
                            book_template=template.get("book_template"),
                            preview=preview)
 
+        # convert to pdf and remove the first empty page
+        pdf_location = self.pdf_converter.convert_to(docx=docx_file, folder=self.content_pdf_location)
+        print("pdf location", pdf_location)
+
+        self.remove_first_page(source_pdf=str(os.path.join(pdf_location)), output_pdf=self.final_pdf_location)
+
+        # TODO finish merge of the pfds - cover and content
+        self.merge_pdfs(input_files=["cover_location.pdf", self.final_pdf_location],
+                        output_file="")
+
         return Ebook(title=title,
                      topic=topic,
                      target_audience=target_audience,
@@ -272,4 +326,3 @@ if __name__ == '__main__':
                                            preview=True)
     print("ebook title: ", ebook.title)
     print("ebook topic: ", ebook.topic)
-
