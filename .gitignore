@@ -161,3 +161,5 @@ cython_debug/
 
 backend/app/temp/*
 backend/app/docs/*
+backend/app/output/
+backend/app/preview/

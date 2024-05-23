@@ -22,10 +22,18 @@ class EbookGenerator:
         self.cover_photo_location = (
             f"cover_photo-{id}.jpg"
         )
-        # self.content_pdf_location = f"backend/app/temp/book-{id}.pdf"
+
         self.content_pdf_location = "backend/app/temp/"
+        self.cover_pdf_location = "backend/app/temp/"
         self.final_pdf_location = f"backend/app/temp/book-{id}.pdf"
-        self.cover_location = f"cover-{id}.docx"
+
+        # cover location
+        self.cover_location = f"backend/app/temp/cover-{id}.docx"
+        self.cover_final_pdf_location = f"backend/app/temp/cover-{id}.pdf"
+
+        # final pdf
+        self.final_pdf_output = f"backend/app/output/final-{id}.pdf"
+        self.final_pdf_preview = f"backend/app/preview/final-{id}.pdf"
 
     def generate_title(self, topic: str, target_audience: str) -> str:
         print("starting generate title")
@@ -71,7 +79,7 @@ class EbookGenerator:
         doc = DocxTemplate(cover_template)
 
         if preview:
-            self.cover_photo_location = "app/templates/covers/preview_photo.png"
+            self.cover_photo_location = "backend/app/templates/covers/preview_photo.png"
         else:
             self.generate_cover_photo(title=title, topic=topic, target_audience=target_audience,
                                       img_output=self.cover_photo_location)
@@ -82,17 +90,7 @@ class EbookGenerator:
         context = {"title": title, "subtext": "Ebook Generator", "image": imagen}
         doc.render(context)
         doc.save(self.cover_location)
-        # convert(self.cover_location, output_file)
-        try:
-            subprocess.call(
-                ['libreoffice', '--headless', '--convert-to', 'pdf', '--outdir', self.cover_location, output_file])
-        except Exception as err:
-            print("something went wrong writing the file", err.__str__())
-
-        try:
-            pypandoc.convert_file(self.cover_location, 'pdf', outputfile=output_file)
-        except Exception as err:
-            print("error 2", err.__str__())
+        self.pdf_converter.convert_to(docx=self.cover_location, folder=output_file)
 
     def generate_outline(
             self,
@@ -260,13 +258,9 @@ class EbookGenerator:
                        num_chapters: int = 6,
                        num_subsections: int = 4,
                        preview: bool = True) -> Ebook:
-        print("starting generating the ebook")
 
         docx_file = f"backend/app/docs/docs-{id}.docx"
-
         title = self.generate_title(topic=topic, target_audience=target_audience)
-
-        print("directory ", os.getcwd())
 
         template = {
             "cover_template": (
@@ -277,13 +271,12 @@ class EbookGenerator:
             ),
         }
 
-        """
         self.generate_cover(cover_template=template.get("cover_template"),
                             title=title,
                             topic=topic,
                             target_audience=target_audience,
                             output_file=self.cover_pdf_location,
-                            preview=False)"""
+                            preview=preview)
 
         outline = self.generate_outline(
             topic,
@@ -303,18 +296,22 @@ class EbookGenerator:
 
         # convert to pdf and remove the first empty page
         pdf_location = self.pdf_converter.convert_to(docx=docx_file, folder=self.content_pdf_location)
-        print("pdf location", pdf_location)
 
         self.remove_first_page(source_pdf=str(os.path.join(pdf_location)), output_pdf=self.final_pdf_location)
 
-        # TODO finish merge of the pfds - cover and content
-        self.merge_pdfs(input_files=["cover_location.pdf", self.final_pdf_location],
-                        output_file="")
+        if 'preview' in self.output_directory:
+            final_pdf_output = self.final_pdf_preview
+        else:
+            final_pdf_output = self.final_pdf_output
+
+        self.merge_pdfs(input_files=[self.cover_final_pdf_location, self.final_pdf_location],
+                        output_file=final_pdf_output)
 
         return Ebook(title=title,
                      topic=topic,
                      target_audience=target_audience,
-                     docx_file=docx_file)
+                     docx_file=docx_file,
+                     pdf_file=final_pdf_output)
 
 
 if __name__ == '__main__':

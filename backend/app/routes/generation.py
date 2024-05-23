@@ -32,11 +32,11 @@ async def create_ebook_preview(payload: CreateEbook):
     Runner().create_ebook(
         topic=payload.topic,
         target_audience=payload.target_audience,
-        recipient_email="teste@mail.com",
-        preview=True,
-        callback=update_task_status,
-        id=id,
+        recipient_email='pedromv1317@gmail.com',
+        # preview=True,
         sell=False,
+        # callback=update_task_status,
+        id=id
     )
 
     try:

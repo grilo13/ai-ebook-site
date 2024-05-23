@@ -4,6 +4,7 @@ import random
 from backend.app.models.ebook_generator import EbookGenerator
 from backend.app.decorator.thread import threaded
 from backend.app.aws.s3 import S3
+from backend.app.resend.email_service import EmailService
 
 S3_BUCKET = "ai-new"
 SENDER = "nulllabsllc@gmail.com"
@@ -42,9 +43,9 @@ class Runner:
         start_time = time.time()
 
         if preview:
-            output_directory = "../preview/"
+            output_directory = "backend/app/preview/"
         else:
-            output_directory = "../output/"
+            output_directory = "backend/app/output/"
 
         eg = EbookGenerator(
             id=id,
@@ -60,16 +61,37 @@ class Runner:
             preview=preview
         )
 
+        if recipient_email:
+            s3 = S3(S3_BUCKET, REGION)
+            email_service = EmailService()
+
+            # if permissions don't work, we want to fail early
+            s3.try_permissions()
+
+            print("Uploading to S3...")
+            file_url = s3.upload_file(ebook.pdf_file, f"backend/app/output/final-{id}.pdf")
+            print(
+                f"Sending email to {recipient_email} with file url: {file_url}"
+            )
+            subject = email_service.generate_message(title=ebook.title,
+                                                     topic=topic,
+                                                     target_audience=target_audience,
+                                                     id=id,
+                                                     recipient_email=recipient_email,
+                                                     file_url=file_url)
+
+            email_service.send_email(subject=subject,
+                                     title=ebook.title,
+                                     recipient_email=recipient_email)
+
         if callback:
             s3 = S3(S3_BUCKET, REGION)
-            # ses = SES(SENDER, REGION)
 
             # if permissions don't work, we want to fail early
             s3.try_permissions()
             # ses.try_permissions()
 
             print("Uploading to S3...")
-            # file_url = s3.upload_file(ebook.pdf_file, f"{id}.pdf")
             file_url = s3.upload_file(f"doc-{id}.docx", ebook.docx_file)
 
             callback(id, "completed", file_url)

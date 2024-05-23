@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = 'AI Ebook Generator'
     SECRET_KEY: str = secrets.token_urlsafe(32)
     LOG_LEVEL: str = os.getenv('LOG_LEVEL')
+    RESEND_API_KEY: str = os.getenv('RESEND_API_KEY')
+    EMAIL_SENDER: str = os.getenv('EMAIL_SENDER')
 
 
 settings = Settings()
