@@ -307,6 +307,7 @@ class EbookGenerator:
         self.merge_pdfs(input_files=[self.cover_final_pdf_location, self.final_pdf_location],
                         output_file=final_pdf_output)
 
+        # TODO need to add number of pages to send also on the email
         return Ebook(title=title,
                      topic=topic,
                      target_audience=target_audience,
