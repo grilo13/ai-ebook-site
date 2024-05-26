@@ -8,7 +8,7 @@ interface PreviewResponse {
 const apiUrl: string = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
 export async function sendPreviewPostRequest(topic: string, target_audience: string): Promise<PreviewResponse> {
-  const url: string = `${apiUrl}/api/create_ebook_preview`;
+  const url: string = `${apiUrl}/create_ebook_preview`;
   try {
     const response = await axios.post(
       url,

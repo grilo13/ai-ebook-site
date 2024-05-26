@@ -72,7 +72,7 @@ export default function Home() {
                                 <div className="flex gap-2">
                                     <a
                                         className="btn btn-orange mb-4 sm:w-auto sm:mb-0"
-                                        href="generate"
+                                        href="generate-sell"
                                     >
                                         Generate E-Book
                                     </a>
