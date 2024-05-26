@@ -32,10 +32,10 @@ async def create_ebook_preview(payload: CreateEbook):
     Runner().create_ebook(
         topic=payload.topic,
         target_audience=payload.target_audience,
-        recipient_email='pedromv1317@gmail.com',
-        # preview=True,
+        # recipient_email='pedromv1317@gmail.com',
+        preview=True,
         sell=False,
-        # callback=update_task_status,
+        callback=update_task_status,
         id=id
     )
 
@@ -50,5 +50,14 @@ async def check_ebook_status(id: str):
     task = tasks.get(id)
     print("task", task)
     if task and task["status"] == "completed":
-        return {"file_url": task.get("url")}
+        return {"status": task.get("status"), "file_url": task.get("url")}
     return {"error": "Ebook not ready yet"}
+
+
+@router.get("/get_pdf/{id:str}")
+async def get_pdf(id: str):
+    task = tasks.get(id)
+    if task and task["status"] == "completed":
+        print("returning file url", task.get('url'))
+        return {"file_url": task.get('url')}
+    return {"error": "PDF not ready"}

@@ -26,7 +26,7 @@ class Runner:
             self,
             topic,
             target_audience,
-            recipient_email,
+            recipient_email=None,
             preview=False,
             sell=False,
             callback=None,
@@ -92,7 +92,7 @@ class Runner:
             # ses.try_permissions()
 
             print("Uploading to S3...")
-            file_url = s3.upload_file(f"doc-{id}.docx", ebook.docx_file)
+            file_url = s3.upload_file(f"doc-{id}.pdf", ebook.pdf_file)
 
             callback(id, "completed", file_url)
 
