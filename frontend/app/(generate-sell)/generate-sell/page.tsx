@@ -92,6 +92,10 @@ export default function Generate() {
             });
     };
 
+    const resetPreview = (): void => {
+        setPdfUrl(null);
+    }
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
         if (e.key === "Enter" && input1 && input2) {
             handlePreviewButtonClick();
