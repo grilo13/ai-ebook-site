@@ -24,7 +24,8 @@ class S3:
         self.try_permissions()
         try:
             with open(file_path, "rb") as f:
-                self.s3_client.upload_fileobj(f, self.bucket, file_name, ExtraArgs={'ContentDisposition': 'inline'})
+                self.s3_client.upload_fileobj(f, self.bucket, file_name, ExtraArgs={'ContentDisposition': 'inline',
+                                                                                    "ContentType": "application/pdf"})
         except ClientError as e:
             logging.error(e)
             return False
