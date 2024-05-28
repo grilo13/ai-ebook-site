@@ -14,5 +14,10 @@ class Settings(BaseSettings):
     RESEND_API_KEY: str = os.getenv('RESEND_API_KEY')
     EMAIL_SENDER: str = os.getenv('EMAIL_SENDER')
 
+    # stripe variables
+    STRIPE_API_SECRET: str = os.getenv('STRIPE_API_SECRET')
+    STRIPE_ENDPOINT_SECRET: str = os.getenv('STRIPE_ENDPOINT_SECRET')
+    FRONTEND_URL: str = os.getenv('FRONTEND_URL')
+
 
 settings = Settings()

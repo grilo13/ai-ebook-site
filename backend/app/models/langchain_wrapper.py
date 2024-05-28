@@ -16,6 +16,7 @@ class LangchainWrapper:
 
         response = self.open_ai.chat.completions.create(
             model='gpt-3.5-turbo',
+            # model='gpt-4o',
             messages=[{
                 "role": "user",
                 "content": prompt
