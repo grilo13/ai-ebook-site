@@ -1,3 +1,5 @@
+import json
+
 import stripe
 from backend.app.core.config import settings
 
@@ -5,6 +7,7 @@ from backend.app.core.config import settings
 class StripeHandler:
     def __init__(self):
         self.STRIPE_API_SECRET = settings.STRIPE_API_SECRET
+        # This is your Stripe CLI webhook secret for testing your endpoint locally.
         self.STRIPE_ENDPOINT_SECRET = settings.STRIPE_ENDPOINT_SECRET
         stripe.api_key = self.STRIPE_API_SECRET
         self.FRONTEND_URL = settings.FRONTEND_URL
@@ -46,6 +49,51 @@ class StripeHandler:
         print(f"Success! Here is your product price id: {product.id}")
         print("price", price.values())
         print("checkout session", checkout_session)
+
+    def handle_webhook(self, event, stripe_signature, payload):
+        print("webhook for fulfill order")
+        event = None
+        print("payload", payload)
+        print("stripe signature", stripe_signature)
+
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, stripe_signature, self.STRIPE_ENDPOINT_SECRET
+            )
+        except ValueError as e:
+            # Invalid payload
+            raise e
+        except stripe.error.SignatureVerificationError as e:
+            # Invalid signature
+            raise e
+
+        print("event type", event['type'])
+        # Handle the event
+        if event['type'] == 'checkout.session.completed':
+            payload_eval = json.loads(payload.decode("utf-8"))
+            print("payload_eval", payload_eval)
+            customer_email = payload_eval["data"]["object"]["customer_details"]["email"]
+            print("customer_email", customer_email)
+
+            # Retrieve the session. If you require line items in the response, you may include them
+            # by expanding line_items.
+            session = stripe.checkout.Session.retrieve(
+                event['data']['object']['id'],
+                expand=['line_items'],
+            )
+
+            line_items = session.line_items
+            print("line items", line_items)
+            # Fulfill the purchase...
+            for line_item in line_items:
+                self.fulfill_order(line_item, customer_email)
+
+        return {'success': True}
+
+    def fulfill_order(self, line_item, recipient_email: str):
+        # TODO: fill me in with the creation of the ebook
+        print("Fulfilling order")
+        print("email", recipient_email)
 
 
 if __name__ == '__main__':
