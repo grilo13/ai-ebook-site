@@ -2,6 +2,7 @@ import json
 
 import stripe
 from backend.app.core.config import settings
+from backend.app.runner import Runner
 
 
 class StripeHandler:
@@ -91,9 +92,18 @@ class StripeHandler:
         return {'success': True}
 
     def fulfill_order(self, line_item, recipient_email: str):
-        # TODO: fill me in with the creation of the ebook
         print("Fulfilling order")
         print("email", recipient_email)
+        topic = line_item["price"]["metadata"]["topic"]
+        target_audience = line_item["price"]["metadata"]["target_audience"]
+        sell = False
+        print("topic", topic)
+        print("target audience", target_audience)
+        runner = Runner()
+        recipient_email = 'pedromv1317@gmail.com'
+        return runner.create_ebook(
+            topic, target_audience, recipient_email, preview=False, sell=sell
+        )
 
 
 if __name__ == '__main__':
