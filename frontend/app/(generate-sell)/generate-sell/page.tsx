@@ -171,20 +171,41 @@ export default function Generate() {
                             </div>
                             <div className="flex flex-wrap -mx-3 mt-6">
                                 <div className="w-full px-3">
-                                    <button
-                                        className={
-                                            pdfUrl ? "btn btn-blue w-full" : "btn btn-orange w-full"
-                                        }
-                                        onClick={
-                                            pdfUrl
-                                                ? handleCheckoutButtonClick
-                                                : handlePreviewButtonClick
-                                        }
-                                        disabled={isLoading}
-                                    >
-                                        {pdfUrl ? "Purchase E-Book" : "Generate E-Book"}
-
-                                    </button>
+                                    {pdfUrl ?
+                                        <div className="flex justify-between flex-col">
+                                            <button
+                                                className={"btn btn-blue w-full"}
+                                                onClick={
+                                                    pdfUrl
+                                                        ? handleCheckoutButtonClick
+                                                        : handlePreviewButtonClick
+                                                }
+                                                disabled={isLoading}
+                                            >Purchase E-Book
+                                            </button>
+                                            <button
+                                                className={"btn btn-teal w-full"}
+                                                onClick={
+                                                    pdfUrl
+                                                        ? handleCheckoutButtonClick
+                                                        : handlePreviewButtonClick
+                                                }
+                                                disabled={isLoading}
+                                            >Purchase E-Book with Premium AI
+                                            </button>
+                                        </div>
+                                        : <button
+                                            className={
+                                                pdfUrl ? "btn btn-blue w-full" : "btn btn-orange w-full"
+                                            }
+                                            onClick={
+                                                pdfUrl
+                                                    ? handleCheckoutButtonClick
+                                                    : handlePreviewButtonClick
+                                            }
+                                            disabled={isLoading}
+                                        >Generate E-Book
+                                        </button>}
                                     <p className="mt-2 text-sm text-gray-600">
                                         *E-Book length will be 40-50 pages. It will consist of 5 chapters, each having 3
                                         subsections, as outlined in the previewed Table of Contents.
@@ -193,11 +214,16 @@ export default function Generate() {
                                         *Final E-Book may differ slightly than preview, as it will be regenerated.
                                     </p>
                                     {pdfUrl && (
-                                        <p className="mt-2 text-sm text-gray-600">
-                                            *By purchasing this e-book, you are agreeing to the
-                                            <a href={tocUrl} className="text-blue-600 hover:underline"> Terms and
-                                                Conditions</a> of the website.
-                                        </p>
+                                        <div className="">
+                                            <p className="mt-2 text-sm text-gray-600">
+                                                *Premium AI will make use of our best model that provides more human writing
+                                            </p>
+                                            <p className="mt-2 text-sm text-gray-600">
+                                                *By purchasing this e-book, you are agreeing to the
+                                                <a href={tocUrl} className="text-blue-600 hover:underline"> Terms and
+                                                    Conditions</a> of the website.
+                                            </p>
+                                        </div>
                                     )}
                                 </div>
                             </div>

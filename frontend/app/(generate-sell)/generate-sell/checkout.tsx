@@ -4,7 +4,7 @@ import axios from 'axios';
 const apiUrl: string = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
 export async function sendCheckoutPostRequest(topic: string, target_audience: string): Promise<string> {
-  const url: string = `${apiUrl}/api/create-checkout-session-sell`;
+  const url: string = `${apiUrl}/create-checkout-session-sell`;
   try {
     const response = await axios.post(
       url,
@@ -18,7 +18,7 @@ export async function sendCheckoutPostRequest(topic: string, target_audience: st
         }
       }
     );
-    console.log(response.data);
+    console.log("response from checkout request", response.data);
     return response.data.redirect_url;
   } catch (error) {
     throw new Error('Failed to fetch data from the API');
