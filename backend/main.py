@@ -11,7 +11,8 @@ from backend.app.core.config import settings
 from backend.app.limiter.limiter import limiter
 from backend.app.core.middleware import log_middleware
 
-from backend.app.routes.generation import router
+from backend.app.routes.routes import router
+from backend.app.routes.stripe_routes import router as stripe_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME
@@ -50,3 +51,4 @@ async def homepage(request: Request):
 
 
 app.include_router(router)
+app.include_router(stripe_router)

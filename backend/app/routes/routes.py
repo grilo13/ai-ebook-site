@@ -7,7 +7,7 @@ import time
 from backend.app.runner import Runner
 from backend.app.stripe.stripe_handler import StripeHandler
 
-router = APIRouter(tags=['generation'])
+router = APIRouter(tags=['routes'])
 
 stripe_handler = StripeHandler()
 
@@ -46,18 +46,6 @@ async def create_ebook_preview(payload: CreateEbook):
         return {'id': id}
     except Exception as err:
         raise HTTPException(status_code=400, detail=err.__str__())
-
-
-@router.post("/stripe_webhooks")
-async def webhook(event: dict,
-                  request: Request,
-                  stripe_signature=Header(None)):
-    try:
-        payload = await request.body()
-        return stripe_handler.handle_webhook(event, stripe_signature, payload), 200
-    except Exception as e:
-        print("Error", str(e))
-        return {"error": str(e)}, 400
 
 
 @router.get("/check_ebook_status/{id:str}", response_class=JSONResponse)
