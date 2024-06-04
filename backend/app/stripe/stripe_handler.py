@@ -13,7 +13,7 @@ class StripeHandler:
         stripe.api_key = self.STRIPE_API_SECRET
         self.FRONTEND_URL = settings.FRONTEND_URL
 
-    def create_checkout_session(self, topic: str, target_audience: str):
+    def create_checkout_session(self, topic: str, target_audience: str) -> stripe.checkout.Session:
         product = stripe.Product.create(
             name=(
                 f"E-Book with topic: '{topic}' for target audience:"
@@ -50,6 +50,8 @@ class StripeHandler:
         print(f"Success! Here is your product price id: {product.id}")
         print("price", price.values())
         print("checkout session", checkout_session)
+
+        return checkout_session
 
     def handle_webhook(self, event, stripe_signature, payload):
         print("webhook for fulfill order")
