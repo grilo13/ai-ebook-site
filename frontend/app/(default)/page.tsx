@@ -9,7 +9,6 @@ import {motion} from "framer-motion";
 import React, {useEffect, useState} from "react";
 
 import {Banner} from "@/components/banner";
-import {FacebookPixel} from "@/components/facebook/pixel";
 import Footer from "@/components/ui/footer";
 
 export default function Home() {
@@ -32,11 +31,6 @@ export default function Home() {
     }, []);
     return (
         <>
-            <FacebookPixel/>
-            <noscript>
-                <img height="1" width="1" style={{display: 'none'}}
-                     src="https://www.facebook.com/tr?id=1429806270964834&ev=PageView&noscript=1"/>
-            </noscript>
             <div className="main-container flex w-screen lg:h-screen items-center justify-center">
                 <section className="p-8 h-full flex lg:justify-end items-center w-full">
                     <div className="max-w-[500px]">

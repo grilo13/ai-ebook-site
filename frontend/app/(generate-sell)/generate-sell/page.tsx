@@ -1,12 +1,13 @@
 "use client";
 
 import React, {useState} from "react";
-import {motion, AnimatePresence} from "framer-motion";
 
 import {sendPreviewPostRequest} from "./preview";
 import {sendCheckoutPostRequest} from "./checkout";
 import {FacebookPixel} from "@/components/facebook/pixel";
 import Footer from "@/components/ui/footer";
+import {Label} from '@/components/ui/label';
+import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
 
 
 interface PreviewResponse {
@@ -24,21 +25,54 @@ interface PdfResponse {
 export default function Generate() {
     const [input1, setInput1] = useState<string>("");
     const [input2, setInput2] = useState<string>("");
+    const [tier, setTier] = useState('basic');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
+    const tiers = [
+        {
+            id: 'basic',
+            name: 'Basic',
+            price: '$0.99',
+            features: ['40-50 pages', '5 chapters', '3 subsections per chapter'],
+        },
+        {
+            id: 'premium',
+            name: 'Premium',
+            price: '$1.49',
+            features: [
+                '50-60 pages',
+                '7 chapters',
+                '4 subsections per chapter',
+                'Enhanced AI writing',
+            ],
+        },
+        {
+            id: 'topPremium',
+            name: 'Top Premium',
+            price: '$1.99',
+            features: [
+                '60-70 pages',
+                '10 chapters',
+                '5 subsections per chapter',
+                'Advanced AI writing',
+                'Custom cover design',
+            ],
+        },
+    ]
+
     // Use environment variable for the API URL
     const apiUrl: string =
-        process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+        process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
     // Use environment variable for the API URL
     const frontendUrl: string =
-        process.env.NEXT_PUBLIC_FRONTEND_URL || "http://127.0.0.1:3000";
+        process.env.NEXT_PUBLIC_FRONTEND_URL ?? "http://127.0.0.1:3000";
 
     const tocUrl: string = frontendUrl + "/toc"
 
     const handleCheckoutButtonClick = () => {
-        sendCheckoutPostRequest(input1, input2)
+        sendCheckoutPostRequest(input1, input2, tier)
             .then((redirect_url) => {
                 console.log(redirect_url);
                 window.location.href = redirect_url; // Handle a successful response if needed.
@@ -183,16 +217,25 @@ export default function Generate() {
                                                 disabled={isLoading}
                                             >Purchase E-Book
                                             </button>
-                                            <button
-                                                className={"btn btn-teal w-full"}
-                                                onClick={
-                                                    pdfUrl
-                                                        ? handleCheckoutButtonClick
-                                                        : handlePreviewButtonClick
-                                                }
-                                                disabled={isLoading}
-                                            >Purchase E-Book with Premium AI
-                                            </button>
+                                            <div className="flex flex-wrap mt-6">
+                                                <div>
+                                                    <Label>Generation Tier</Label>
+                                                    <RadioGroup value={tier} onValueChange={setTier}
+                                                                className="grid gap-4 mt-2">
+                                                        {tiers.map((t) => (
+                                                            <div key={t.id} className="flex items-center space-x-2">
+                                                                <RadioGroupItem value={t.id} id={t.id}/>
+                                                                <Label htmlFor={t.id} className="flex flex-col">
+                                                                    <span
+                                                                        className="font-semibold">{t.name} - {t.price}</span>
+                                                                    <span
+                                                                        className="text-sm text-muted-foreground">{t.features.join(', ')}</span>
+                                                                </Label>
+                                                            </div>
+                                                        ))}
+                                                    </RadioGroup>
+                                                </div>
+                                            </div>
                                         </div>
                                         : <button
                                             className={
@@ -205,19 +248,17 @@ export default function Generate() {
                                             }
                                             disabled={isLoading}
                                         >Generate E-Book
-                                        </button>}
-                                    <p className="mt-2 text-sm text-gray-600">
+                                        </button>
+                                    }
+                                    {/*<p className="mt-2 text-sm text-gray-600">
                                         *E-Book length will be 40-50 pages. It will consist of 5 chapters, each having 3
                                         subsections, as outlined in the previewed Table of Contents.
-                                    </p>
-                                    <p className="mt-2 text-sm text-gray-600">
+                                    </p>*/}
+                                    <p className="mt-4 text-sm text-gray-600">
                                         *Final E-Book may differ slightly than preview, as it will be regenerated.
                                     </p>
                                     {pdfUrl && (
                                         <div className="">
-                                            <p className="mt-2 text-sm text-gray-600">
-                                                *Premium AI will make use of our best model that provides more human writing
-                                            </p>
                                             <p className="mt-2 text-sm text-gray-600">
                                                 *By purchasing this e-book, you are agreeing to the
                                                 <a href={tocUrl} className="text-blue-600 hover:underline"> Terms and
