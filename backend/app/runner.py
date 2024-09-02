@@ -26,14 +26,14 @@ class Runner:
             self,
             topic,
             target_audience,
+            num_chapters=NUM_CHAPTERS,
+            num_subsections=NUM_SUBSECTIONS,
             recipient_email=None,
             preview=False,
             sell=False,
             callback=None,
             id=None,
-            add_to_shop=False,
-            num_chapters=NUM_CHAPTERS,
-            num_subsections=NUM_SUBSECTIONS,
+            add_to_shop=False
     ):
         if id == None:
             id = str(random.getrandbits(32)) + str(time.time())
@@ -116,7 +116,7 @@ class Runner:
 if __name__ == "__main__":
     runner = Runner()
     runner.create_ebook(
-        "History of Maori Culture, and what happened to the Natives of New Zealand",
-        "25, Maori Culture, New Zealand History",
-        "tweti0504@gmail.com"
+        topic="History of Maori Culture, and what happened to the Natives of New Zealand",
+        target_audience="25, Maori Culture, New Zealand History",
+        recipient_email="tweti0504@gmail.com"
     )

@@ -3,6 +3,7 @@ import json
 import stripe
 from backend.app.core.config import settings
 from backend.app.runner import Runner
+from backend.app.schemas.schemas import Tier
 
 
 class StripeHandler:
@@ -13,7 +14,7 @@ class StripeHandler:
         stripe.api_key = self.STRIPE_API_SECRET
         self.FRONTEND_URL = settings.FRONTEND_URL
 
-    def create_checkout_session(self, topic: str, target_audience: str) -> stripe.checkout.Session:
+    def create_checkout_session(self, topic: str, target_audience: str, tier: Tier) -> stripe.checkout.Session:
         product = stripe.Product.create(
             name=(
                 f"E-Book with topic: '{topic}' for target audience:"
@@ -21,7 +22,24 @@ class StripeHandler:
             ),
         )
         print(product.id)
-        unit_amount = 99
+
+        print("tier used ", tier.value)
+        chapters = 6
+        num_subsections = 4
+
+        if tier == tier.BASIC:
+            unit_amount = 99
+        elif tier == tier.PREMIUM:
+            unit_amount = 149
+            chapters = 9
+            num_subsections = 6
+        elif tier == tier.TOP_PREMIUM:
+            unit_amount = 199
+            chapters = 15
+            num_subsections = 6
+        else:
+            unit_amount = 99
+
         price = stripe.Price.create(
             unit_amount=unit_amount,
             currency="usd",
@@ -29,6 +47,8 @@ class StripeHandler:
             metadata={
                 "topic": topic,
                 "target_audience": target_audience,
+                "chapters": chapters,
+                "num_subsections": num_subsections
                 # "sell": sell,
             },
         )
@@ -96,18 +116,31 @@ class StripeHandler:
     def fulfill_order(self, line_item, recipient_email: str):
         print("Fulfilling order")
         print("email", recipient_email)
+
         topic = line_item["price"]["metadata"]["topic"]
         target_audience = line_item["price"]["metadata"]["target_audience"]
+        num_chapters = line_item["price"]["metadata"]["num_chapters"]
+        num_subsections = line_item["price"]["metadata"]["num_subsections"]
         sell = False
+
         print("topic", topic)
         print("target audience", target_audience)
+        print("num_chapters", num_chapters)
+        print("num_subsections", num_subsections)
+
         runner = Runner()
         recipient_email = 'pedromv1317@gmail.com'
         return runner.create_ebook(
-            topic, target_audience, recipient_email, preview=False, sell=sell
+            topic=topic,
+            target_audience=target_audience,
+            recipient_email=recipient_email,
+            num_chapters=num_chapters,
+            num_subsections=num_subsections,
+            preview=False,
+            sell=sell
         )
 
 
 if __name__ == '__main__':
     stripe_handler = StripeHandler()
-    stripe_handler.create_checkout_session(topic="teste", target_audience="test")
+    stripe_handler.create_checkout_session(topic="teste", target_audience="test", tier=Tier.BASIC)

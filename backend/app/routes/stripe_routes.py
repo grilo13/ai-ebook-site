@@ -11,7 +11,8 @@ router = APIRouter(tags=['stripe_routes'])
 async def create_checkout_session_sell(payload: CreateEbook):
     try:
         checkout_session = stripe_handler.create_checkout_session(topic=payload.topic,
-                                                                  target_audience=payload.target_audience)
+                                                                  target_audience=payload.target_audience,
+                                                                  tier=payload.tier)
         print(checkout_session)
         print("checkout session redirect url", checkout_session.url)
         return {'redirect_url': checkout_session.url}
