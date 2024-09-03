@@ -1,25 +1,50 @@
-'use client';
+'use client'
 
 import Link from 'next/link'
-import { fetchDataFromApi } from './script'
+import { CheckCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
-export default function Generate() {
+export default function SuccessPage() {
   return (
-    <section className="bg-gradient-to-b from-gray-100 to-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="pt-32 pb-12 md:pt-40 md:pb-20">
+    <section className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-100 to-white">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+        <div className="space-y-8">
+          <CheckCircle className="w-20 h-20 text-green-500 mx-auto" />
 
-          {/* Page header */}
-          <div className="max-w-3xl mx-auto text-center pb-12 md:pb-20">
-            <h1 className="h1">Success! The E-book will be sent to your email.</h1>
-            <h3 className="h3">(Estimated time: less than 10 minutes)</h3>
-            <p>In the rare case of a platform error, if you do not recieve your E-book in more than 1 day, please email nulllabsllc@gmail.com with the topic and target audience of the book. Please be sure to check your 'spam' folder.</p>
+          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl text-black-700">
+            Success! Your E-book is on its way
+          </h1>
+
+          <p className="text-xl text-green-600">
+            The E-book will be sent to your email in less than 10 minutes.
+          </p>
+
+          <div className="bg-white text-gray-800 rounded-lg p-6 shadow-lg border border-green-200">
+            <h3 className="font-semibold mb-2 text-black-700">Important Note:</h3>
+            <p className="text-sm">
+              In the rare case of a platform error, if you do not receive your E-book within 1 day,
+              please email <span className="font-medium text-green-600">nulllabsllc@gmail.com</span> with the topic
+              and target audience of the book. Don't forget to check your spam folder!
+            </p>
           </div>
 
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="h1">Generate more <Link href="/generate-sell">here</Link></h1>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-3">
+            <Link href="/generate-sell">
+              <Button
+                  variant="outline"
+                  className="w-full sm:w-auto bg-white text-black-600 border-green-300 hover:bg-green-50 hover:text-green-700"
+              >
+                Generate More E-books
+              </Button>
+            </Link>
+            <Link href="/">
+              <Button
+                  className="w-full sm:w-auto bg-green-500 text-white hover:bg-green-600"
+              >
+                Return to Home
+              </Button>
+            </Link>
           </div>
-
         </div>
       </div>
     </section>

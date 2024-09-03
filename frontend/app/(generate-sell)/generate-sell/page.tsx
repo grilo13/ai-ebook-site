@@ -111,7 +111,7 @@ export default function Generate() {
                         pollForStatus(bookId); // Continue polling
                     }
                 });
-        }, 1000); // Poll every  secondsapi/check_status
+        }, 1000); // Poll every  seconds api/check_status
     };
 
     const getPDF = (bookId: string): void => {
