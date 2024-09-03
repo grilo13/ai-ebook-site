@@ -115,12 +115,9 @@ class EbookGenerator:
             ' [subsection title]". '
         )
         outline_json = self.langchain_wrapper.generate_completion(prompt=outline_prompt)
-        print("outline json", outline_json)
-        outline_json = outline_json[
-                       outline_json.find("{"): outline_json.rfind("}") + 1
-                       ]
-        print("outline json", outline_json)
+        outline_json = outline_json[outline_json.find("{"): outline_json.rfind("}") + 1]
         outline = json.loads(outline_json)
+        print("outline", outline)
         """if not self.verify_outline(outline, num_chapters, num_subsections):
             raise Exception("Outline not well formed!")"""
 

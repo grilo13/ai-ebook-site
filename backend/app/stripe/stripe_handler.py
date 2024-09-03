@@ -47,7 +47,7 @@ class StripeHandler:
             metadata={
                 "topic": topic,
                 "target_audience": target_audience,
-                "chapters": chapters,
+                "num_chapters": chapters,
                 "num_subsections": num_subsections
                 # "sell": sell,
             },
