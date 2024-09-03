@@ -30,7 +30,7 @@ Website to generate ebooks using AI
 - listen method:
   - `stripe listen --forward-to localhost:8000/stripe_webhooks` 
 - trigger object:
-  - `stripe  trigger checkout.session.completed --add price:metadata['topic']='How to Increase Productivity' --add price:metadata['target_audience']='Young Adult'`
+  - `stripe  trigger checkout.session.completed --add price:metadata['topic']='How to Increase Productivity' --add price:metadata['target_audience']='Young Adult' --add price:metadata['num_chapters']='8' --add price:metadata['num_subsections']='4'`
  
 - trigger object with test email
   - `stripe  trigger checkout.session.completed --add price:metadata['topic']='How to Increase Productivity' --add price:metadata['target_audience']='Young Adult' --add data:object:customer_details['email']='pedromv1317@gmail.com'`
