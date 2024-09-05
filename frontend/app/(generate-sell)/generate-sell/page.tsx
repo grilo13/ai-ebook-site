@@ -8,6 +8,13 @@ import {FacebookPixel} from "@/components/facebook/pixel";
 import Footer from "@/components/ui/footer";
 import {Label} from '@/components/ui/label';
 import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from "@/components/ui/alert"
+
+import {AlertCircle} from "lucide-react"
 
 
 interface PreviewResponse {
@@ -26,8 +33,11 @@ export default function Generate() {
     const [input1, setInput1] = useState<string>("");
     const [input2, setInput2] = useState<string>("");
     const [tier, setTier] = useState('basic');
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+
+    const [previewError, setPreviewError] = useState<string>("");
 
     const tiers = [
         {
@@ -84,6 +94,7 @@ export default function Generate() {
 
     const handlePreviewButtonClick = () => {
         console.log("handlePreviewButtonClick!");
+        setPreviewError("");
         setIsLoading(true);
         sendPreviewPostRequest(input1, input2)
             .then((response: PreviewResponse) => {
@@ -92,8 +103,10 @@ export default function Generate() {
                 pollForStatus(bookId);
             })
             .catch((error: Error) => {
+                console.log("here")
                 console.error(error);
                 setIsLoading(false);
+                setPreviewError("Failed to create preview. Try again later or send email to aiebookgenerator@gmail.com");
             });
     };
 
@@ -237,18 +250,30 @@ export default function Generate() {
                                                 </div>
                                             </div>
                                         </div>
-                                        : <button
-                                            className={
-                                                pdfUrl ? "btn btn-blue w-full" : "btn btn-orange w-full"
+                                        : <div className="flex flex-col gap-2">
+                                            <button
+                                                className={
+                                                    pdfUrl ? "btn btn-blue w-full" : "btn btn-orange w-full"
+                                                }
+                                                onClick={
+                                                    pdfUrl
+                                                        ? handleCheckoutButtonClick
+                                                        : handlePreviewButtonClick
+                                                }
+                                                disabled={isLoading}
+                                            >Generate E-Book
+                                            </button>
+                                            { previewError
+                                                ? <Alert variant="destructive">
+                                                <AlertCircle className="h-4 w-4"/>
+                                                <AlertTitle>Error</AlertTitle>
+                                                <AlertDescription>
+                                                    {previewError}
+                                                </AlertDescription>
+                                            </Alert>
+                                                : ""
                                             }
-                                            onClick={
-                                                pdfUrl
-                                                    ? handleCheckoutButtonClick
-                                                    : handlePreviewButtonClick
-                                            }
-                                            disabled={isLoading}
-                                        >Generate E-Book
-                                        </button>
+                                        </div>
                                     }
                                     {/*<p className="mt-2 text-sm text-gray-600">
                                         *E-Book length will be 40-50 pages. It will consist of 5 chapters, each having 3

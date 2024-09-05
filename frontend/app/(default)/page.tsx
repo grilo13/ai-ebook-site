@@ -4,12 +4,14 @@
 //   title: "Home - Simple",
 //   description: "Page description",
 // };
+import Image from 'next/image'
 
 import {motion} from "framer-motion";
 import React, {useEffect, useState} from "react";
 
 import {Banner} from "@/components/banner";
 import Footer from "@/components/ui/footer";
+import {XCircle} from "lucide-react";
 
 export default function Home() {
     const [isMobile, setIsMobile] = useState(false);
@@ -48,6 +50,7 @@ export default function Home() {
                                     className="w-10 h-10 bg-[#FF3D00] logo"
                                 ></motion.div>
                                 <div className="flex gap-2 flex-col">
+                                    <Image src="/icon.png" width={300} height={300} alt="Picture of the author"/>
                                     <h1 className="text-xl text-black font-medium">
                                         Generate any book with AI in minutes.
                                     </h1>
